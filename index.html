@@ -511,7 +511,7 @@ function renderChecklist() {
     body += "Tenant Representative: " + (state.signoff.tenant_sign||"—") + "\n";
     body += "Date: " + (state.signoff.sign_date||"—") + "\n";
 
-    var mailto = "mailto:diane@cordish.com,rbordner@cordish.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    var mailto = "mailto:diane@cordish.com,rbordner@cordish.com,tstocksdale@cordish.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     window.location.href = mailto;
 
     document.getElementById("complete-sub").textContent =
