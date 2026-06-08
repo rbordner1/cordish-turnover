@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cordish Space Turnover Checklist</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#080e18;font-family:Georgia,serif;color:#eef4ff;min-height:100vh}
+button{font-family:Georgia,serif;cursor:pointer}
+input,textarea{font-family:Georgia,serif}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.5)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a1420}
+::-webkit-scrollbar-thumb{background:#1e3048;border-radius:3px}
+.screen{display:none;min-height:100vh}
+#landing{flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(135deg,#080e18 0%,#0e1c30 50%,#080e18 100%)}
+#completion{flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+.landing-inner{text-align:left;margin-bottom:3rem;max-width:620px;width:100%}
+.landing-inner h1{font-size:clamp(1.8rem,4vw,2.8rem);color:#eef4ff;margin:1rem 0 0.4rem;font-weight:300;letter-spacing:0.05em;text-transform:uppercase}
+.landing-inner p{color:#5a7a9a}
+.card-row{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center}
+.card{border-radius:16px;padding:2rem 2.5rem;text-align:left;width:270px;color:#fff;transition:all 0.2s ease;border:1px solid transparent}
+.card:hover{transform:translateY(-4px)}
+.card-icon{font-size:2rem;margin-bottom:0.75rem}
+.card-title{font-size:1.2rem;font-weight:600;margin-bottom:0.2rem}
+.card-sub{font-size:0.9rem;margin-bottom:0.4rem}
+.card-desc{font-size:0.78rem;color:#8090a8}
+.sticky-header{position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05)}
+.header-inner{max-width:760px;margin:0 auto}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem}
+.back-btn{background:none;border:none;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;padding:0;margin-bottom:0.3rem;display:block}
+.header-subtitle{font-size:0.85rem;font-weight:600;color:#9ab4cc;margin-top:0.25rem}
+.progress-pct{font-size:1.4rem;font-weight:600;text-align:right}
+.progress-label{font-size:0.7rem;color:#4a6a8a;text-align:right}
+.progress-bar-bg{height:3px;background:#0d1e30;border-radius:2px}
+.progress-bar-fill{height:100%;border-radius:2px;transition:width 0.3s ease}
+.body{max-width:760px;margin:0 auto;padding:2rem 1.5rem 6rem}
+.section-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem;padding-bottom:0.5rem}
+.section-header h2{margin:0;font-size:0.9rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+.critical-badge{margin-left:0.5rem;font-size:0.62rem;padding:0.15rem 0.45rem;border-radius:4px}
+.field-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin-bottom:2.5rem}
+.field-group{display:flex;flex-direction:column;gap:0.25rem}
+.field-label{font-size:0.67rem;color:#4a6a8a;text-transform:uppercase;letter-spacing:0.08em}
+.field-input{width:100%;background:#061018;border:1px solid #1e3048;border-radius:6px;color:#e8f2ff;padding:0.42rem 0.7rem;font-size:0.82rem;outline:none;transition:border-color 0.15s}
+textarea.field-input{resize:vertical}
+.field-readonly{background:#061018;border:1px solid #1a2a38;border-radius:6px;color:#4a7a9a;padding:0.42rem 0.7rem;font-size:0.82rem;font-style:italic}
+.util-group{margin-bottom:1.25rem;border-radius:12px;overflow:hidden;background:#08121e;transition:all 0.2s ease}
+.util-group-header{padding:0.75rem 1rem;background:rgba(13,26,40,0.6);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.util-name{font-size:0.95rem;font-weight:600;color:#d0e4f0}
+.util-badge{font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:10px}
+.util-btns{display:flex;gap:0.5rem}
+.pill-btn{padding:0.25rem 0.8rem;border-radius:20px;font-size:0.73rem;transition:all 0.15s ease;border:1px solid}
+.util-meters{padding:0.75rem 1rem}
+.meter-entry{margin-bottom:0.85rem;border-radius:10px;overflow:hidden;background:#0a141f;border:1px solid #1e3048;transition:border-color 0.2s ease}
+.meter-header{padding:0.65rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.meter-label{font-size:0.72rem;font-weight:700;letter-spacing:0.06em;min-width:52px}
+.meter-type-btns{display:flex;gap:0.4rem}
+.remove-btn{background:none;border:1px solid #3a1a1a;color:#7a4a4a;border-radius:6px;font-size:0.72rem;padding:0.2rem 0.6rem}
+.meter-fields{padding:0.85rem 1rem;border-top:1px solid #0d1e30}
+.meter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:0.6rem;margin-top:0.9rem}
+.task-row{display:flex;align-items:center;gap:0.6rem}
+.task-text{font-size:0.82rem;color:#b0c8e0}
+.task-text.done{color:#4a7a9a;text-decoration:line-through}
+.notify-row{margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap}
+.check-item{margin-bottom:0.6rem;padding:0.75rem 1rem;border-radius:9px;transition:all 0.15s ease;border:1px solid #1a2e44;background:rgba(13,26,40,0.47)}
+.check-row{display:flex;align-items:flex-start;gap:0.65rem}
+.chk{width:20px;height:20px;min-width:20px;border-radius:5px;border:2px solid #2a3e54;background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.15s ease;flex-shrink:0}
+.check-text{font-size:0.86rem;color:#b8d0e4;line-height:1.4}
+.check-text.done{color:#4a7a9a;text-decoration:line-through}
+.note-input{margin-top:0.35rem;width:140px;background:#061018;border:1px solid #1e3048;border-radius:5px;color:#eef4ff;padding:0.3rem 0.6rem;font-size:0.78rem}
+.notes-section{margin-bottom:2rem}
+.note-field{margin-bottom:0.9rem}
+.note-label{display:block;font-size:0.72rem;color:#4a6a8a;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem}
+.signoff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin-bottom:2.5rem}
+.submit-wrap{text-align:center}
+.submit-btn{padding:0.9rem 2.5rem;border-radius:10px;font-size:1rem;font-weight:600;letter-spacing:0.05em;transition:all 0.2s ease;border:1px solid}
+.complete-icon{font-size:3.5rem;margin-bottom:1rem}
+.complete-title{font-size:1.8rem;font-weight:400;margin-bottom:0.4rem}
+.complete-sub{color:#5a7a9a;margin-bottom:2rem}
+.complete-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.logo-text{display:flex;flex-direction:column;line-height:1.15}
+.logo-word{font-family:Arial,Helvetica,sans-serif;font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="landing" class="screen">
+    <div class="landing-inner">
+      <div id="logo-lg" style="margin-bottom:1.5rem"></div>
+      <h1>Space Turnover</h1>
+      <p>Select checklist type to begin</p>
+    </div>
+    <div class="card-row">
+      <button class="card" id="btn-ltt" style="background:linear-gradient(135deg,rgba(26,58,92,0.8),rgba(26,58,92,0.4));border-color:rgba(74,158,255,0.27)">
+        <div class="card-icon">&#8594;</div>
+        <div class="card-title">Landlord &#8594; Tenant</div>
+        <div class="card-sub" style="color:#4a9eff">Space Delivery Checklist</div>
+        <div class="card-desc">Complete prior to tenant taking possession</div>
+      </button>
+      <button class="card" id="btn-ttl" style="background:linear-gradient(135deg,rgba(45,26,74,0.8),rgba(45,26,74,0.4));border-color:rgba(180,127,255,0.27)">
+        <div class="card-icon">&#8592;</div>
+        <div class="card-title">Tenant &#8594; Landlord</div>
+        <div class="card-sub" style="color:#b47fff">Space Return Checklist</div>
+        <div class="card-desc">Complete upon tenant vacating</div>
+      </button>
+    </div>
+  </div>
+
+  <div id="checklist-screen" class="screen">
+    <div class="sticky-header" id="sticky-header">
+      <div class="header-inner">
+        <div class="header-top">
+          <div>
+            <button class="back-btn" id="back-btn">&#8592; Back</button>
+            <div id="header-logo"></div>
+            <div class="header-subtitle" id="header-subtitle"></div>
+          </div>
+          <div>
+            <div class="progress-pct" id="progress-pct">0%</div>
+            <div class="progress-label">complete</div>
+          </div>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="body" id="checklist-body"></div>
+  </div>
+
+  <div id="completion" class="screen">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title" id="complete-title">Checklist Complete</div>
+    <div class="complete-sub" id="complete-sub"></div>
+    <div class="complete-btns">
+      <button id="new-btn" style="padding:0.75rem 1.5rem;border-radius:8px;font-size:0.9rem;border:1px solid">Start New</button>
+      <button id="home-btn" style="background:transparent;border:1px solid #223344;color:#5a7a9a;padding:0.75rem 1.5rem;border-radius:8px;font-size:0.9rem">Back to Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var CHECKLISTS = {
+  ltt: {
+    title: "Landlord \u2192 Tenant",
+    subtitle: "Space Delivery Checklist",
+    color: "#1a3a5c", accent: "#4a9eff",
+    deliveryLabel: "Delivery Date", tenantLabel: "Tenant Name",
+    leaseDateLabel: "Lease Commencement Date",
+    sections: [
+      { title: "Physical Space", icon: "&#128273;", items: [
+        { id:"keys", label:"Keys / fobs / access cards provided to tenant", note:true, notePlaceholder:"Qty issued" },
+        { id:"photos", label:"Move-in condition photos taken and filed" },
+        { id:"hvac", label:"HVAC systems operational and filters replaced" },
+        { id:"lighting", label:"All lighting functional" },
+        { id:"plumbing", label:"Plumbing fixtures checked (no leaks, drains clear)" },
+        { id:"fire", label:"Fire extinguishers in place and current" },
+        { id:"signage", label:"Tenant signage installed / approved" },
+        { id:"parking", label:"Parking spaces identified and communicated" }
+      ]},
+      { title: "Administrative", icon: "&#128203;", items: [
+        { id:"lease", label:"Fully executed lease on file" },
+        { id:"coi", label:"Tenant COI received and on file" },
+        { id:"deposit", label:"Security deposit collected and documented" },
+        { id:"commence", label:"Rent commencement date confirmed \u2014 Accounting / Lease Administration notified" },
+        { id:"emergency", label:"Tenant emergency contacts on file" },
+        { id:"rules", label:"Rules & Regulations provided to tenant" }
+      ]}
+    ],
+    notesFields: [{ id:"punch", label:"Open Items / Punch List" }]
+  },
+  ttl: {
+    title: "Tenant \u2192 Landlord",
+    subtitle: "Space Return Checklist",
+    color: "#2d1a4a", accent: "#b47fff",
+    deliveryLabel: "Turnover Date", tenantLabel: "Vacating Tenant",
+    leaseDateLabel: "Lease Expiration / Termination Date",
+    sections: [
+      { title: "Physical Space", icon: "&#128273;", items: [
+        { id:"keys", label:"All keys / fobs / access cards returned", note:true, notePlaceholder:"Qty returned" },
+        { id:"photos", label:"Move-out condition photos taken and filed" },
+        { id:"prop", label:"All tenant personal property removed" },
+        { id:"signage", label:"Tenant signage removed" },
+        { id:"damage", label:"Damage assessment completed" },
+        { id:"clean", label:"Space broom-clean / condition confirmed" },
+        { id:"hvac", label:"HVAC filters checked" },
+        { id:"alts", label:"Alterations / improvements documented (keep or restore)" }
+      ]},
+      { title: "Administrative", icon: "&#128203;", items: [
+        { id:"billing", label:"Lease Administration notified \u2014 stop billing and process final reconciliation" },
+        { id:"deposit", label:"Security deposit disposition calculated and processed" },
+        { id:"coi", label:"COI expiration / removal confirmed" },
+        { id:"charges", label:"Damage / restoration charges documented if applicable" },
+        { id:"forward", label:"Forwarding address obtained from tenant" }
+      ]}
+    ],
+    notesFields: [
+      { id:"dmg", label:"Damage / Condition Notes" },
+      { id:"ded", label:"Security Deposit Deductions (if any)" }
+    ]
+  }
+};
+
+var mode = null;
+var state = {};
+
+function freshState() {
+  return {
+    fields: {}, checks: {}, notes: {}, noteFields: {}, signoff: {},
+    utilities: {
+      Electric: { na:false, meters:[{}] },
+      Gas:      { na:false, meters:[{}] },
+      Water:    { na:false, meters:[{}] }
+    }
+  };
+}
+
+function logoHTML(size) {
+  var lg = size === "lg";
+  var w = lg ? 70 : 44, h = lg ? 83 : 52;
+  var ts = lg ? "1.05rem" : "0.66rem";
+  var gap = lg ? "10px" : "7px";
+  var col = lg ? "#1a2a3a" : "#d8eaf8";
+  return '<div style="display:flex;align-items:center;gap:' + gap + '">'
+    + '<svg width="' + w + '" height="' + h + '" viewBox="0 0 44 52" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    + '<rect width="44" height="52" fill="#4ab4d8"/>'
+    + '<g fill="white">'
+    + '<rect x="2" y="34" width="5" height="14"/>'
+    + '<rect x="7" y="28" width="4" height="20"/>'
+    + '<rect x="11" y="16" width="6" height="32"/>'
+    + '<rect x="12" y="20" width="4" height="2" fill="#4ab4d8"/>'
+    + '<rect x="12" y="24" width="4" height="2" fill="#4ab4d8"/>'
+    + '<rect x="17" y="30" width="5" height="18"/>'
+    + '<rect x="22" y="10" width="5" height="38"/>'
+    + '<rect x="23" y="6" width="3" height="6"/>'
+    + '<rect x="27" y="24" width="5" height="24"/>'
+    + '<rect x="32" y="32" width="5" height="16"/>'
+    + '<rect x="37" y="36" width="5" height="12"/>'
+    + '</g>'
+    + '<rect x="0" y="47" width="44" height="5" fill="white"/>'
+    + '</svg>'
+    + '<div class="logo-text">'
+    + '<span class="logo-word" style="font-size:' + ts + ';color:' + col + '">The</span>'
+    + '<span class="logo-word" style="font-size:' + ts + ';color:' + col + '">Cordish</span>'
+    + '<span class="logo-word" style="font-size:' + ts + ';color:' + col + '">Companies</span>'
+    + '</div></div>';
+}
+
+function showScreen(id) {
+  var screens = document.querySelectorAll(".screen");
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].style.display = "none";
+  }
+  var el = document.getElementById(id);
+  el.style.display = (id === "landing" || id === "completion") ? "flex" : "block";
+}
+
+function openChecklist(m) {
+  mode = m;
+  state = freshState();
+  renderChecklist();
+  showScreen("checklist-screen");
+  updateProgress();
+}
+
+function goBack() { showScreen("landing"); }
+function goHome() { mode = null; state = {}; showScreen("landing"); }
+function startNew() { state = freshState(); renderChecklist(); showScreen("checklist-screen"); updateProgress(); }
+
+function updateProgress() {
+  var cl = CHECKLISTS[mode];
+  var total = 0, done = 0;
+  ["property","suite","tenant","leaseDate","pm","deliveryDate"].forEach(function(k) {
+    total++; if (state.fields[k]) done++;
+  });
+  ["Electric","Gas","Water"].forEach(function(u) {
+    var grp = state.utilities[u];
+    total++;
+    if (grp.na) { done++; return; }
+    var meters = grp.meters;
+    var anyTyped = false;
+    meters.forEach(function(m) { if (m.meterType) anyTyped = true; });
+    if (anyTyped) done++;
+    meters.forEach(function(m) {
+      if (!m.meterType) return;
+      total += 2; if (m.checked) done++; if (m.meterNo) done++;
+      if (m.meterType === "Direct") { total++; if (m.accountNo) done++; }
+    });
+  });
+  cl.sections.forEach(function(sec) {
+    sec.items.forEach(function(item) { total++; if (state.checks[item.id]) done++; });
+  });
+  cl.notesFields.forEach(function(f) { total++; if (state.noteFields[f.id]) done++; });
+  ["pm_sign","tenant_sign","sign_date"].forEach(function(k) { total++; if (state.signoff[k]) done++; });
+
+  var pct = total > 0 ? Math.round((done/total)*100) : 0;
+  var accent = cl.accent;
+  document.getElementById("progress-pct").textContent = pct + "%";
+  document.getElementById("progress-pct").style.color = accent;
+  document.getElementById("progress-bar").style.width = pct + "%";
+  document.getElementById("progress-bar").style.background = accent;
+}
+
+function makeInput(type, value, onchangeFn, accentColor) {
+  var inp = document.createElement("input");
+  inp.type = type || "text";
+  inp.value = value || "";
+  inp.className = "field-input";
+  inp.addEventListener("focus", function() { this.style.borderColor = accentColor; });
+  inp.addEventListener("blur", function() { this.style.borderColor = "#1e3048"; });
+  inp.addEventListener("change", onchangeFn);
+  return inp;
+}
+
+function makeFieldGroup(label, inputEl) {
+  var div = document.createElement("div");
+  div.className = "field-group";
+  var lbl = document.createElement("span");
+  lbl.className = "field-label";
+  lbl.textContent = label;
+  div.appendChild(lbl);
+  div.appendChild(inputEl);
+  return div;
+}
+
+function renderChecklist() {
+  var cl = CHECKLISTS[mode];
+  var accent = cl.accent;
+  var base = cl.color;
+
+  document.getElementById("sticky-header").style.background = base + "f0";
+  document.getElementById("back-btn").style.color = accent;
+  document.getElementById("header-logo").innerHTML = logoHTML("sm");
+  document.getElementById("header-subtitle").textContent = cl.title + " \u2014 " + cl.subtitle;
+  document.getElementById("checklist-screen").style.background =
+    "linear-gradient(160deg,#07101a 0%," + base + "44 60%,#07101a 100%)";
+  document.getElementById("complete-title").style.color = accent;
+  document.getElementById("new-btn").style.cssText =
+    "background:" + accent + "22;border:1px solid " + accent + "66;color:" + accent + ";padding:0.75rem 1.5rem;border-radius:8px;font-size:0.9rem";
+
+  var body = document.getElementById("checklist-body");
+  body.innerHTML = "";
+
+  // Space Information
+  body.appendChild(makeSectionHeader("Space Information", "&#127962;", accent, false));
+  var infoGrid = document.createElement("div");
+  infoGrid.className = "field-grid";
+  [
+    { id:"property", label:"Property Name", type:"text" },
+    { id:"suite",    label:"Suite / Space #", type:"text" },
+    { id:"tenant",   label:cl.tenantLabel, type:"text" },
+    { id:"leaseDate",label:cl.leaseDateLabel, type:"date" },
+    { id:"pm",       label:"Property Manager", type:"text" },
+    { id:"deliveryDate", label:cl.deliveryLabel, type:"date" }
+  ].forEach(function(f) {
+    var inp = makeInput(f.type, state.fields[f.id], function() {
+      state.fields[f.id] = this.value; updateProgress();
+    }, accent);
+    infoGrid.appendChild(makeFieldGroup(f.label, inp));
+  });
+  body.appendChild(infoGrid);
+
+  // Utility Transitions
+  body.appendChild(makeSectionHeader("Utility Transitions", "&#9889;", accent, true));
+  var utilWrap = document.createElement("div");
+  utilWrap.id = "util-wrap";
+  utilWrap.style.marginBottom = "2.5rem";
+  ["Electric","Gas","Water"].forEach(function(u) {
+    utilWrap.appendChild(buildUtilityGroup(u, accent));
+  });
+  body.appendChild(utilWrap);
+
+  // Checklist sections
+  cl.sections.forEach(function(sec) {
+    var wrap = document.createElement("div");
+    wrap.style.marginBottom = "2.5rem";
+    wrap.appendChild(makeSectionHeader(sec.title, sec.icon, accent, false));
+    sec.items.forEach(function(item) {
+      wrap.appendChild(buildCheckItem(item, accent));
+    });
+    body.appendChild(wrap);
+  });
+
+  // Notes
+  body.appendChild(makeSectionHeader("Notes", "&#128221;", accent, false));
+  var notesWrap = document.createElement("div");
+  notesWrap.className = "notes-section";
+  cl.notesFields.forEach(function(f) {
+    var div = document.createElement("div");
+    div.className = "note-field";
+    var lbl = document.createElement("label");
+    lbl.className = "note-label";
+    lbl.textContent = f.label;
+    var ta = document.createElement("textarea");
+    ta.className = "field-input";
+    ta.rows = 3;
+    ta.style.width = "100%";
+    ta.value = state.noteFields[f.id] || "";
+    ta.addEventListener("input", function() { state.noteFields[f.id] = this.value; updateProgress(); });
+    div.appendChild(lbl);
+    div.appendChild(ta);
+    notesWrap.appendChild(div);
+  });
+  body.appendChild(notesWrap);
+
+  // Sign-off
+  body.appendChild(makeSectionHeader("Sign-Off", "&#9997;&#65039;", accent, false));
+  var sgGrid = document.createElement("div");
+  sgGrid.className = "signoff-grid";
+  [
+    { key:"pm_sign", label:"PM Signature / Initials", type:"text" },
+    { key:"tenant_sign", label:"Tenant Representative", type:"text" },
+    { key:"sign_date", label:"Sign-Off Date", type:"date" }
+  ].forEach(function(f) {
+    var inp = makeInput(f.type, state.signoff[f.key], function() {
+      state.signoff[f.key] = this.value; updateProgress();
+    }, accent);
+    sgGrid.appendChild(makeFieldGroup(f.label, inp));
+  });
+  body.appendChild(sgGrid);
+
+  // Submit
+  var submitWrap = document.createElement("div");
+  submitWrap.className = "submit-wrap";
+  var submitBtn = document.createElement("button");
+  submitBtn.className = "submit-btn";
+  submitBtn.textContent = "Submit Checklist";
+  submitBtn.style.cssText = "border-color:" + accent + ";color:" + accent + ";background:" + accent + "44";
+  submitBtn.addEventListener("click", function() {
+    var cl2 = CHECKLISTS[mode];
+    var prop = state.fields.property || "Unknown Property";
+    var suite = state.fields.suite || "—";
+    var pm = state.fields.pm || "—";
+    var tenant = state.fields.tenant || "—";
+    var leaseDate = state.fields.leaseDate || "—";
+    var deliveryDate = state.fields.deliveryDate || "—";
+
+    var subject = cl2.title + " Checklist: " + prop + ", Suite " + suite;
+
+    var body = cl2.title.toUpperCase() + " — SPACE TURNOVER CHECKLIST" +
+      "\n========================================\n\n" +
+      "PROPERTY: " + prop + "\n" +
+      "SUITE / SPACE: " + suite + "\n" +
+      (mode==="ltt" ? "TENANT: " : "VACATING TENANT: ") + tenant + "\n" +
+      (mode==="ltt" ? "LEASE COMMENCEMENT: " : "LEASE EXPIRATION: ") + leaseDate + "\n" +
+      "PROPERTY MANAGER: " + pm + "\n" +
+      (mode==="ltt" ? "DELIVERY DATE: " : "TURNOVER DATE: ") + deliveryDate + "\n\n";
+
+    // Utilities
+    body += "UTILITY TRANSITIONS\n--------------------\n";
+    ["Electric","Gas","Water"].forEach(function(u) {
+      var grp = state.utilities[u];
+      body += "\n" + u.toUpperCase() + ": ";
+      if (grp.na) { body += "N/A\n"; return; }
+      grp.meters.forEach(function(m, i) {
+        if (!m.meterType) { body += "(not configured)\n"; return; }
+        var prefix = grp.meters.length > 1 ? "\n  Meter " + (i+1) + " — " : "";
+        body += prefix + m.meterType + "\n";
+        body += "  Provider: " + (m.meterType==="Submeter" ? "Landlord (internal)" : (m.provider||"—")) + "\n";
+        if (m.meterType==="Direct") body += "  Account #: " + (m.accountNo||"—") + "\n";
+        body += "  Meter #: " + (m.meterNo||"—") + "\n";
+        if (m.meterType==="Submeter") body += "  Submeter Location/ID: " + (m.submeterLocation||"—") + "\n";
+        if (m.meterType==="Direct") {
+          body += "  Transfer Effective Date: " + (m.transferDate||"—") + "\n";
+          body += "  Confirmation #: " + (m.confirmationNo||"—") + "\n";
+        }
+        if (m.meterType==="Submeter" && mode==="ttl") {
+          body += "  Final Reading: " + (m.finalReading||"—") + "\n";
+          body += "  Date of Reading: " + (m.readingDate||"—") + "\n";
+        }
+        body += "  Task completed: " + (m.checked ? "YES" : "NO") + "\n";
+        if (m.meterType==="Submeter") {
+          body += "  Lease Admin notified: " + (m["notify_Lease_Administration"] ? "YES" : "NO") + "\n";
+          body += "  Accounting notified: " + (m["notify_Accounting"] ? "YES" : "NO") + "\n";
+        }
+      });
+    });
+
+    // Checklist sections
+    cl2.sections.forEach(function(sec) {
+      body += "\n" + sec.title.toUpperCase() + "\n--------------------\n";
+      sec.items.forEach(function(item) {
+        var chk = state.checks[item.id] ? "[X]" : "[ ]";
+        body += chk + " " + item.label;
+        if (state.notes[item.id]) body += " (" + state.notes[item.id] + ")";
+        body += "\n";
+      });
+    });
+
+    // Notes
+    body += "\nNOTES\n--------------------\n";
+    cl2.notesFields.forEach(function(f) {
+      body += f.label + ":\n" + (state.noteFields[f.id] || "(none)") + "\n\n";
+    });
+
+    // Sign-off
+    body += "SIGN-OFF\n--------------------\n";
+    body += "PM: " + (state.signoff.pm_sign||"—") + "\n";
+    body += "Tenant Representative: " + (state.signoff.tenant_sign||"—") + "\n";
+    body += "Date: " + (state.signoff.sign_date||"—") + "\n";
+
+    var mailto = "mailto:ryan@cordish.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    window.location.href = mailto;
+
+    document.getElementById("complete-sub").textContent =
+      cl2.title + " \u2014 " + prop + ", Suite " + suite;
+    document.getElementById("completion").style.background =
+      "linear-gradient(135deg,#080e18 0%," + cl2.color + "55 100%)";
+    showScreen("completion");
+  });
+  submitWrap.appendChild(submitBtn);
+  body.appendChild(submitWrap);
+}
+
+function makeSectionHeader(title, icon, accent, critical) {
+  var div = document.createElement("div");
+  div.className = "section-header";
+  div.style.borderBottom = "1px solid " + (critical ? accent + "44" : "#1a2a3a");
+  var iconSpan = document.createElement("span");
+  iconSpan.style.fontSize = "1.1rem";
+  iconSpan.innerHTML = icon;
+  var h2 = document.createElement("h2");
+  h2.style.color = critical ? accent : "#9ab4cc";
+  h2.textContent = title;
+  if (critical) {
+    var badge = document.createElement("span");
+    badge.className = "critical-badge";
+    badge.style.cssText = "background:" + accent + "22;color:" + accent;
+    badge.textContent = "CRITICAL";
+    h2.appendChild(badge);
+  }
+  div.appendChild(iconSpan);
+  div.appendChild(h2);
+  return div;
+}
+
+function buildCheckItem(item, accent) {
+  var checked = !!state.checks[item.id];
+  var div = document.createElement("div");
+  div.className = "check-item";
+  div.id = "ci-" + item.id;
+  if (checked) { div.style.background = accent + "0d"; div.style.borderColor = accent + "33"; }
+
+  var row = document.createElement("div");
+  row.className = "check-row";
+
+  var btn = document.createElement("button");
+  btn.className = "chk";
+  btn.id = "cb-" + item.id;
+  if (checked) { btn.style.background = accent; btn.style.borderColor = accent; btn.textContent = "\u2713"; }
+  btn.addEventListener("click", function() {
+    state.checks[item.id] = !state.checks[item.id];
+    var c = state.checks[item.id];
+    btn.style.background = c ? accent : "transparent";
+    btn.style.borderColor = c ? accent : "#2a3e54";
+    btn.textContent = c ? "\u2713" : "";
+    div.style.background = c ? accent + "0d" : "rgba(13,26,40,0.47)";
+    div.style.borderColor = c ? accent + "33" : "#1a2e44";
+    txt.className = c ? "check-text done" : "check-text";
+    updateProgress();
+  });
+
+  var inner = document.createElement("div");
+  inner.style.flex = "1";
+  var txt = document.createElement("div");
+  txt.className = checked ? "check-text done" : "check-text";
+  txt.id = "ct-" + item.id;
+  txt.textContent = item.label;
+  inner.appendChild(txt);
+
+  if (item.note) {
+    var ni = document.createElement("input");
+    ni.type = "text";
+    ni.className = "note-input";
+    ni.placeholder = item.notePlaceholder || "";
+    ni.value = state.notes[item.id] || "";
+    ni.addEventListener("change", function() { state.notes[item.id] = this.value; });
+    inner.appendChild(ni);
+  }
+
+  row.appendChild(btn);
+  row.appendChild(inner);
+  div.appendChild(row);
+  return div;
+}
+
+function buildUtilityGroup(utility, accent) {
+  var grp = state.utilities[utility];
+  var isNA = grp.na;
+  var configured = grp.meters.filter(function(m) { return m.meterType === "Direct" || m.meterType === "Submeter"; }).length;
+
+  var outer = document.createElement("div");
+  outer.className = "util-group";
+  outer.id = "ug-" + utility;
+  outer.style.border = "1px solid " + (isNA ? "#151f2a" : (configured > 0 ? accent + "44" : "#1e3048"));
+  outer.style.opacity = isNA ? "0.4" : "1";
+
+  // Header
+  var hdr = document.createElement("div");
+  hdr.className = "util-group-header";
+
+  var nameWrap = document.createElement("div");
+  nameWrap.style.cssText = "display:flex;align-items:center;gap:0.65rem";
+  var nameSpan = document.createElement("span");
+  nameSpan.className = "util-name";
+  nameSpan.textContent = utility;
+  nameWrap.appendChild(nameSpan);
+  if (configured > 0 && !isNA) {
+    var badge = document.createElement("span");
+    badge.className = "util-badge";
+    badge.style.cssText = "background:" + accent + "22;color:" + accent;
+    badge.textContent = grp.meters.length + (grp.meters.length === 1 ? " meter" : " meters");
+    nameWrap.appendChild(badge);
+  }
+
+  var btnsDiv = document.createElement("div");
+  btnsDiv.className = "util-btns";
+
+  if (!isNA) {
+    var addBtn = document.createElement("button");
+    addBtn.className = "pill-btn";
+    addBtn.style.cssText = "background:" + accent + "18;border-color:" + accent + "44;color:" + accent;
+    addBtn.textContent = "+ Add Meter";
+    addBtn.addEventListener("click", function() {
+      state.utilities[utility].meters.push({});
+      refreshUtil(utility, accent);
+    });
+    btnsDiv.appendChild(addBtn);
+  }
+
+  var naBtn = document.createElement("button");
+  naBtn.className = "pill-btn";
+  naBtn.style.cssText = isNA
+    ? "background:" + accent + "22;border-color:" + accent + ";color:" + accent
+    : "background:transparent;border-color:#2a3a50;color:#5a7a9a";
+  naBtn.textContent = "N/A";
+  naBtn.addEventListener("click", function() {
+    state.utilities[utility].na = !state.utilities[utility].na;
+    refreshUtil(utility, accent);
+  });
+  btnsDiv.appendChild(naBtn);
+
+  hdr.appendChild(nameWrap);
+  hdr.appendChild(btnsDiv);
+  outer.appendChild(hdr);
+
+  // Meters
+  if (!isNA) {
+    var metersDiv = document.createElement("div");
+    metersDiv.className = "util-meters";
+    metersDiv.id = "um-" + utility;
+    grp.meters.forEach(function(m, i) {
+      metersDiv.appendChild(buildMeterEntry(utility, i, grp.meters.length, m, accent));
+    });
+    outer.appendChild(metersDiv);
+  } else {
+    var empty = document.createElement("div");
+    empty.id = "um-" + utility;
+    outer.appendChild(empty);
+  }
+
+  return outer;
+}
+
+function refreshUtil(utility, accent) {
+  var existing = document.getElementById("ug-" + utility);
+  if (existing) {
+    existing.replaceWith(buildUtilityGroup(utility, accent));
+  }
+  updateProgress();
+}
+
+function buildMeterEntry(utility, index, total, m, accent) {
+  var meterType = m.meterType || "";
+  var isDirect = meterType === "Direct";
+  var isSub = meterType === "Submeter";
+  var isReturn = mode === "ttl";
+
+  var outer = document.createElement("div");
+  outer.className = "meter-entry";
+  outer.style.borderColor = meterType ? accent + "55" : "#1e3048";
+
+  // Header row
+  var hdr = document.createElement("div");
+  hdr.className = "meter-header";
+  if (meterType) hdr.style.borderBottom = "1px solid #0d1e30";
+
+  var left = document.createElement("div");
+  left.style.cssText = "display:flex;align-items:center;gap:0.6rem";
+  if (total > 1) {
+    var lbl = document.createElement("span");
+    lbl.className = "meter-label";
+    lbl.style.color = accent;
+    lbl.textContent = "Meter " + (index + 1);
+    left.appendChild(lbl);
+  }
+
+  var typeBtns = document.createElement("div");
+  typeBtns.className = "meter-type-btns";
+  ["Direct","Submeter"].forEach(function(opt) {
+    var btn = document.createElement("button");
+    btn.className = "pill-btn";
+    var active = meterType === opt;
+    btn.style.cssText = "background:" + (active ? accent + "33" : "transparent")
+      + ";border-color:" + (active ? accent : "#2a3a50")
+      + ";color:" + (active ? accent : "#5a7a9a");
+    btn.textContent = opt;
+    btn.addEventListener("click", function() {
+      state.utilities[utility].meters[index].meterType = opt;
+      refreshUtil(utility, accent);
+    });
+    typeBtns.appendChild(btn);
+  });
+  left.appendChild(typeBtns);
+  hdr.appendChild(left);
+
+  if (total > 1) {
+    var removeBtn = document.createElement("button");
+    removeBtn.className = "remove-btn";
+    removeBtn.textContent = "\u2715 Remove";
+    removeBtn.addEventListener("click", function() {
+      state.utilities[utility].meters.splice(index, 1);
+      if (state.utilities[utility].meters.length === 0) state.utilities[utility].meters = [{}];
+      refreshUtil(utility, accent);
+    });
+    hdr.appendChild(removeBtn);
+  }
+  outer.appendChild(hdr);
+
+  // Fields
+  if (isDirect || isSub) {
+    var fields = document.createElement("div");
+    fields.className = "meter-fields";
+
+    // Task checkbox
+    var taskRow = document.createElement("div");
+    taskRow.className = "task-row";
+    var chkBtn = document.createElement("button");
+    chkBtn.className = "chk";
+    chkBtn.style.cssText = m.checked
+      ? "background:" + accent + ";border-color:" + accent
+      : "background:transparent;border-color:#2a3e54";
+    if (m.checked) chkBtn.textContent = "\u2713";
+    var taskLabel = document.createElement("span");
+    taskLabel.className = m.checked ? "task-text done" : "task-text";
+    taskLabel.textContent = isDirect
+      ? (isReturn ? "Transfer account back to Landlord name" : "Transfer account to tenant name")
+      : (isReturn ? "Record final submeter reading" : "Document submeter \u2014 notify Lease Admin & Accounting");
+    chkBtn.addEventListener("click", function() {
+      m.checked = !m.checked;
+      chkBtn.style.background = m.checked ? accent : "transparent";
+      chkBtn.style.borderColor = m.checked ? accent : "#2a3e54";
+      chkBtn.textContent = m.checked ? "\u2713" : "";
+      taskLabel.className = m.checked ? "task-text done" : "task-text";
+      updateProgress();
+    });
+    taskRow.appendChild(chkBtn);
+    taskRow.appendChild(taskLabel);
+    fields.appendChild(taskRow);
+
+    // Input grid
+    var grid = document.createElement("div");
+    grid.className = "meter-grid";
+
+    function addField(label, key, type) {
+      var inp = makeInput(type || "text", m[key], function() {
+        state.utilities[utility].meters[index][key] = this.value;
+        updateProgress();
+      }, accent);
+      grid.appendChild(makeFieldGroup(label, inp));
+    }
+
+    if (isSub) {
+      var provDiv = document.createElement("div");
+      provDiv.className = "field-group";
+      var provLbl = document.createElement("span");
+      provLbl.className = "field-label";
+      provLbl.textContent = "Utility Provider";
+      var provVal = document.createElement("div");
+      provVal.className = "field-readonly";
+      provVal.textContent = "Landlord (internal)";
+      provDiv.appendChild(provLbl);
+      provDiv.appendChild(provVal);
+      grid.appendChild(provDiv);
+    } else {
+      addField("Utility Provider", "provider");
+    }
+
+    if (isDirect) addField("Account #", "accountNo");
+    addField("Meter #", "meterNo");
+    if (isSub) addField("Submeter Location / ID", "submeterLocation");
+    if (isDirect) {
+      addField("Transfer Effective Date", "transferDate", "date");
+      addField("Confirmation # (if applicable)", "confirmationNo");
+    }
+    if (isSub && isReturn) {
+      addField("Final Meter Reading", "finalReading");
+      addField("Date of Reading", "readingDate", "date");
+    }
+
+    fields.appendChild(grid);
+
+    // Notify buttons (submeter only)
+    if (isSub) {
+      var notifyRow = document.createElement("div");
+      notifyRow.className = "notify-row";
+      ["Lease Administration","Accounting"].forEach(function(n) {
+        var key = "notify_" + n.replace(" ","_");
+        var active = !!m[key];
+        var btn = document.createElement("button");
+        btn.className = "pill-btn";
+        btn.style.cssText = active
+          ? "background:#1a3a1a;border-color:#4a9a4a;color:#6adf6a"
+          : "background:#061018;border-color:#1e3048;color:#5a7a9a";
+        btn.textContent = (active ? "\u2713" : "\u25CB") + " Notify " + n;
+        btn.addEventListener("click", function() {
+          m[key] = !m[key];
+          btn.style.cssText = m[key]
+            ? "background:#1a3a1a;border-color:#4a9a4a;color:#6adf6a"
+            : "background:#061018;border-color:#1e3048;color:#5a7a9a";
+          btn.textContent = (m[key] ? "\u2713" : "\u25CB") + " Notify " + n;
+        });
+        notifyRow.appendChild(btn);
+      });
+      fields.appendChild(notifyRow);
+    }
+
+    outer.appendChild(fields);
+  }
+
+  return outer;
+}
+
+// Wire up static buttons
+document.getElementById("btn-ltt").addEventListener("click", function() { openChecklist("ltt"); });
+document.getElementById("btn-ttl").addEventListener("click", function() { openChecklist("ttl"); });
+document.getElementById("back-btn").addEventListener("click", goBack);
+document.getElementById("new-btn").addEventListener("click", startNew);
+document.getElementById("home-btn").addEventListener("click", goHome);
+
+// Init
+document.getElementById("logo-lg").innerHTML = logoHTML("lg");
+showScreen("landing");
+</script>
+</body>
+</html>
