@@ -151,19 +151,22 @@ var CHECKLISTS = {
     sections: [
       { title: "Physical Space", icon: "&#128273;", items: [
         { id:"keys", label:"Keys / fobs / access cards provided to tenant", note:true, notePlaceholder:"Qty issued" },
+        { id:"lockbox", label:"Lockbox code provided to tenant", note:true, notePlaceholder:"Lockbox code", naOption:true },
+        { id:"access_date", label:"Date access provided to tenant", note:true, notePlaceholder:"Date" },
         { id:"photos", label:"Move-in condition photos taken and filed" },
-        { id:"hvac", label:"HVAC systems operational and filters replaced" },
+        { id:"hvac", label:"HVAC systems operational and filters replaced", naOption:true },
         { id:"lighting", label:"All lighting functional" },
         { id:"plumbing", label:"Plumbing fixtures checked (no leaks, drains clear)" },
         { id:"fire", label:"Fire extinguishers in place and current" },
         { id:"signage", label:"Tenant signage installed / approved" },
-        { id:"parking", label:"Parking spaces identified and communicated" }
+        { id:"parking", label:"Parking spaces identified and communicated", naOption:true }
       ]},
       { title: "Administrative", icon: "&#128203;", items: [
         { id:"lease", label:"Fully executed lease on file" },
         { id:"coi", label:"Tenant COI received and on file" },
         { id:"deposit", label:"Security deposit collected and documented" },
         { id:"commence", label:"Rent commencement date confirmed \u2014 Accounting / Lease Administration notified" },
+        { id:"holdover", label:"Holdover rents applicable?", yesno:true },
         { id:"emergency", label:"Tenant emergency contacts on file" },
         { id:"rules", label:"Rules & Regulations provided to tenant" }
       ]}
@@ -179,12 +182,13 @@ var CHECKLISTS = {
     sections: [
       { title: "Physical Space", icon: "&#128273;", items: [
         { id:"keys", label:"All keys / fobs / access cards returned", note:true, notePlaceholder:"Qty returned" },
+        { id:"lockbox", label:"Lockbox code changed / deactivated", naOption:true },
         { id:"photos", label:"Move-out condition photos taken and filed" },
         { id:"prop", label:"All tenant personal property removed" },
         { id:"signage", label:"Tenant signage removed" },
         { id:"damage", label:"Damage assessment completed" },
         { id:"clean", label:"Space broom-clean / condition confirmed" },
-        { id:"hvac", label:"HVAC filters checked" },
+        { id:"hvac", label:"HVAC filters checked", naOption:true },
         { id:"alts", label:"Alterations / improvements documented (keep or restore)" }
       ]},
       { title: "Administrative", icon: "&#128203;", items: [
@@ -478,13 +482,20 @@ function renderChecklist() {
     });
 
     // Checklist sections
+    var naItems = state.naItems || {};
+    var yesnoItems = state.yesnoItems || {};
     cl2.sections.forEach(function(sec) {
       body += "\n" + sec.title.toUpperCase() + "\n--------------------\n";
       sec.items.forEach(function(item) {
-        var chk = state.checks[item.id] ? "[X]" : "[ ]";
-        body += chk + " " + item.label;
-        if (state.notes[item.id]) body += " (" + state.notes[item.id] + ")";
-        body += "\n";
+        if (naItems[item.id]) { body += "[N/A] " + item.label + "\n"; return; }
+        if (item.yesno) {
+          body += "[" + (yesnoItems[item.id]||"?") + "] " + item.label + "\n";
+        } else {
+          var chk = state.checks[item.id] ? "[X]" : "[ ]";
+          body += chk + " " + item.label;
+          if (state.notes[item.id]) body += " (" + state.notes[item.id] + ")";
+          body += "\n";
+        }
       });
     });
 
